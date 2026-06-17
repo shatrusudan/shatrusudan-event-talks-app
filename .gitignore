@@ -1,0 +1,25 @@
+# Python Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# Python Cache and Compiles
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE and OS Settings
+.DS_Store
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# App-specific runtime paths
+bq-releases-notes/venv/
+bq-releases-notes/.venv/
+bq-releases-notes/__pycache__/

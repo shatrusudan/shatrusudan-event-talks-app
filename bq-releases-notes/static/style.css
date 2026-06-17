@@ -617,10 +617,16 @@ body {
     gap: 0.75rem;
 }
 
-/* Custom Checkbox */
+/* Custom Checkbox (Expanded touch target to 44x44px for ergonomics) */
 .card-select-container {
     position: relative;
     cursor: pointer;
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: -13px; /* expands click bounds outer shell */
 }
 
 .checkbox-custom {
@@ -1365,26 +1371,30 @@ body {
     }
     
     .release-notes-feed::before {
-        left: 20px;
+        display: none; /* Hide vertical timeline line on mobile */
     }
     
     .date-group {
         grid-template-columns: 1fr;
-        gap: 1rem;
+        gap: 1.25rem;
     }
     
     .group-date {
         text-align: left;
         position: relative;
         top: 0;
-        padding-top: 0;
+        padding: 0.5rem 0;
         background-color: transparent;
-        padding-left: 2.5rem;
+        padding-left: 0;
+        color: var(--bq-accent);
+        font-size: 1.15rem;
+        font-weight: 800;
+        border-bottom: 2px solid var(--border-color);
+        margin-bottom: 0.5rem;
     }
     
     .group-cards::before {
-        left: calc(-2.5rem - 1px - 4px + 20px); /* Adjust to mobile layout timeline alignment */
-        top: 1rem;
+        display: none; /* Hide node dot on mobile */
     }
     
     .floating-action-banner {
@@ -1410,13 +1420,13 @@ body {
     }
 }
 
-/* Theme Toggle Button */
+/* Theme Toggle Button (44x44px ergonomic touch target) */
 .theme-toggle-btn {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
     color: var(--text-secondary);
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     display: flex;
     align-items: center;

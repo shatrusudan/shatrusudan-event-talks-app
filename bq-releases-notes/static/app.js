@@ -630,10 +630,14 @@ window.copySingleUpdate = function(id, event) {
     });
 };
 
-// Export Filtered Updates to CSV
+// Export Filtered/Selected Updates to CSV
 function exportToCSV() {
-    const filtered = getFilteredUpdates();
-    if (filtered.length === 0) {
+    const isSelectionMode = appState.selectedUpdates.size > 0;
+    const targets = isSelectionMode 
+        ? appState.flatUpdates.filter(u => appState.selectedUpdates.has(u.id))
+        : getFilteredUpdates();
+        
+    if (targets.length === 0) {
         showToast('No updates to export', 'error');
         return;
     }
@@ -642,7 +646,7 @@ function exportToCSV() {
     const headers = ['Date', 'Type', 'Link', 'Description'];
     
     // Escape quotes and format rows
-    const rows = filtered.map(u => {
+    const rows = targets.map(u => {
         const date = u.date.replace(/"/g, '""');
         const type = u.type.replace(/"/g, '""');
         const link = u.link.replace(/"/g, '""');
@@ -657,13 +661,16 @@ function exportToCSV() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', `bigquery_release_notes_${new Date().toISOString().slice(0, 10)}.csv`);
+    
+    const filenameType = isSelectionMode ? 'selected' : 'filtered';
+    link.setAttribute('download', `bigquery_release_notes_${filenameType}_${new Date().toISOString().slice(0, 10)}.csv`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     
-    showToast('CSV Exported Successfully!');
+    const count = targets.length;
+    showToast(`Exported ${count} ${isSelectionMode ? 'selected' : 'visible'} update${count > 1 ? 's' : ''} to CSV!`);
 }
 
 // Theme Management

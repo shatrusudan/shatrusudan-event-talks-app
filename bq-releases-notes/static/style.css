@@ -56,6 +56,40 @@
     --glass-blur: blur(12px);
 }
 
+/* Light Theme Variable Overrides */
+body.light-theme {
+    --bg-main: #f8fafc;
+    --bg-sidebar: #ffffff;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f1f5f9;
+    --border-color: #e2e8f0;
+    --border-color-glow: #cbd5e1;
+    
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    
+    --bq-accent: #e37400;
+    --bq-glow: rgba(227, 116, 0, 0.1);
+    
+    --glass-bg: rgba(255, 255, 255, 0.85);
+}
+
+/* Code block styles for Light Theme */
+body.light-theme .card-content code,
+body.light-theme .card-content pre {
+    background-color: #f1f5f9;
+    border-color: #e2e8f0;
+    color: #0f172a;
+}
+
+body.light-theme .card-content pre code {
+    background-color: transparent;
+    border: none;
+    color: inherit;
+}
+
+
 /* Reset and Base Styles */
 * {
     margin: 0;
@@ -1375,3 +1409,75 @@ body {
         flex-grow: 1;
     }
 }
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-toggle-btn:hover {
+    border-color: var(--border-color-glow);
+    color: var(--text-primary);
+    background-color: var(--bg-card-hover);
+}
+
+.theme-toggle-btn i {
+    font-size: 1.1rem;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+    position: absolute;
+}
+
+/* In dark mode, hide the sun, show the moon */
+body.dark-theme .icon-sun {
+    transform: translateY(40px);
+    opacity: 0;
+}
+body.dark-theme .icon-moon {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* In light mode, show the sun, hide the moon */
+body.light-theme .icon-sun {
+    transform: translateY(0);
+    opacity: 1;
+}
+body.light-theme .icon-moon {
+    transform: translateY(-40px);
+    opacity: 0;
+}
+
+/* Card actions flex layout adjustments */
+.card-actions-top {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-card-action {
+    padding: 0.45rem 0.85rem;
+    font-size: 0.8rem;
+    border-radius: 6px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.btn-card-action:hover {
+    background-color: var(--bg-card-hover);
+    border-color: var(--border-color-glow);
+    color: var(--text-primary);
+}
+

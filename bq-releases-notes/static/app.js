@@ -51,11 +51,16 @@ const els = {
     
     // Action buttons inside empty/error states
     resetFiltersBtn: document.getElementById('reset-filters-btn'),
-    retryBtn: document.getElementById('retry-btn')
+    retryBtn: document.getElementById('retry-btn'),
+    
+    // Theme Toggle & Export
+    themeToggleBtn: document.getElementById('theme-toggle-btn'),
+    exportCsvBtn: document.getElementById('export-csv-btn')
 };
 
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
     initEventListeners();
     fetchReleases();
 });
@@ -92,6 +97,10 @@ function initEventListeners() {
     els.tweetTextarea.addEventListener('input', handleTweetTextareaInput);
     els.tweetCopyBtn.addEventListener('click', handleCopyTweet);
     els.tweetSubmitBtn.addEventListener('click', handlePostTweet);
+    
+    // Theme toggle & Export CSV
+    els.themeToggleBtn.addEventListener('click', toggleTheme);
+    els.exportCsvBtn.addEventListener('click', exportToCSV);
 }
 
 // Fetch Release Notes
@@ -246,6 +255,9 @@ function renderFeed() {
                         
                         <div class="card-actions-top">
                             <!-- Click bubble avoids toggling select card -->
+                            <button class="btn btn-card-action" onclick="copySingleUpdate('${update.id}', event)" title="Copy description to clipboard">
+                                <i class="fa-solid fa-copy"></i> Copy
+                            </button>
                             <button class="btn btn-secondary btn-card-tweet" onclick="openTweetComposerForSingle('${update.id}', event)">
                                 <i class="fa-brands fa-x-twitter"></i> Tweet
                             </button>
@@ -603,4 +615,72 @@ function updateSyncIndicator() {
     const seconds = date.getSeconds().toString().padStart(2, '0');
     
     els.syncTime.textContent = `Last synced: ${hours}:${minutes}:${seconds}`;
+}
+
+// Copy Single Update Content
+window.copySingleUpdate = function(id, event) {
+    if (event) event.stopPropagation();
+    const update = appState.flatUpdates.find(u => u.id === id);
+    if (!update) return;
+    
+    navigator.clipboard.writeText(update.text).then(() => {
+        showToast('Description copied to clipboard!');
+    }).catch(err => {
+        console.error('Failed to copy description: ', err);
+    });
+};
+
+// Export Filtered Updates to CSV
+function exportToCSV() {
+    const filtered = getFilteredUpdates();
+    if (filtered.length === 0) {
+        showToast('No updates to export', 'error');
+        return;
+    }
+    
+    // CSV Headers
+    const headers = ['Date', 'Type', 'Link', 'Description'];
+    
+    // Escape quotes and format rows
+    const rows = filtered.map(u => {
+        const date = u.date.replace(/"/g, '""');
+        const type = u.type.replace(/"/g, '""');
+        const link = u.link.replace(/"/g, '""');
+        const text = u.text.replace(/"/g, '""');
+        return `"${date}","${type}","${link}","${text}"`;
+    });
+    
+    const csvContent = [headers.join(','), ...rows].join('\n');
+    
+    // Create and trigger download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `bigquery_release_notes_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showToast('CSV Exported Successfully!');
+}
+
+// Theme Management
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.body.className = savedTheme === 'light' ? 'light-theme' : 'dark-theme';
+}
+
+function toggleTheme() {
+    const isDark = document.body.classList.contains('dark-theme');
+    if (isDark) {
+        document.body.className = 'light-theme';
+        localStorage.setItem('theme', 'light');
+        showToast('Switched to Light Theme');
+    } else {
+        document.body.className = 'dark-theme';
+        localStorage.setItem('theme', 'dark');
+        showToast('Switched to Dark Theme');
+    }
 }
